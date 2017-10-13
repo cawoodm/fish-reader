@@ -14,7 +14,7 @@ git push origin master
 
 :: Copy to local cawoodm github site
 DEL /Q /S %PUB%\*.*
-XCOPY .\build\*.* %PUB% /Y /S
+XCOPY .\build\*.* %PUB%\* /Y /S
 ECHO Ready to test in %PUB% folder
 PAUSE
 

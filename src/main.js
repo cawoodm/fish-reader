@@ -12,6 +12,7 @@ function init() {
   
   window.g = {
     ticks: 0,
+    difficulty: 1,
   };
   
   g.canvas = document.createElement("canvas");
@@ -34,16 +35,32 @@ function init() {
 
 function spawn(t, x, y) {
   oscillate(g.osc[1]);
-  if (t===1)
-    g.entities.push(new Fish({x: x||rand.range(0, g.canvas.width/5), y: y||rand.range(0, g.canvas.height), lifetime: 2000, size:rand.range(12,18), num: 1, gravity: 0, dd: 50, hue: rand.range(0, 360)}));
-  else
-    g.entities.push(new Bubbles({x: x||rand.range(0, g.canvas.width), y: g.canvas.height, height: g.canvas.height, lifetime: 1200, gravity: -50, size:rand.range(3,10), num: rand.range(10,30), hue: rand.range(120, 260)}));
+  if (t===0)
+    return g.entities.push(new Bubbles({x: x||rand.range(0, g.canvas.width), y: g.canvas.height, height: g.canvas.height, lifetime: 1200, gravity: -50, size:rand.range(3,10), num: rand.range(10,30), hue: rand.range(120, 260)}));
+  let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let word = alphabet.charAt(rand.range(0, 23));
+  g.entities.push(new Fish({
+    x: x||rand.range(0, g.canvas.width),
+    y: y||rand.range(0, g.canvas.height),
+    width: g.canvas.width,
+    lifetime: 2000, size:rand.range(12,18),
+    num: 1,
+    word: word,
+    gravity: 0,
+    dd: 50,
+    hue: rand.range(0, 360)
+  }));
 };
 function restart() {
   g.entities.length = 0;
   g.entities.push(new Ocean({width: g.canvas.width, height: g.canvas.height})); 
   for (let i=0; i<10; i++) spawn(0);
-  for (let i=0; i<10; i++) spawn(1);
+  for (let i=0; i<g.difficulty; i++) spawn(1);
+}
+function countFish() {
+  return g.entities.reduce((n, e)=> {
+    return n + (e instanceof Fish)?1:0
+  }, 0);
 }
 loop.start(function(elapsed) {
   
@@ -52,7 +69,10 @@ loop.start(function(elapsed) {
   g.ctx.fillRect(0, 0, g.canvas.width, g.canvas.height);
   
   g.ticks++;
-  if (g.ticks%30===0) spawn(0);
+  if (g.ticks%30===0) {
+    spawn(0);
+    if (countFish()<g.difficulty) spawn(1);
+  }
   
   oscillate(g.osc[2])
   

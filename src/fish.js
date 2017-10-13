@@ -2,9 +2,10 @@ var rng = require("./rng");
 var rand = rng(Math.random());
 
 var Fish = function(options) {
-  Object.assign(this, {x: 0, y:0, num: 1, hue: 120, size: 5, lifetime: 100, gravity: 2, dd: 100});
+  Object.assign(this, {x: 0, y:0, width:1, num: 1, word: "", hue: 120, size: 5, lifetime: 100, gravity: 2, dd: 100});
   Object.assign(this, options);
   this.objs = [];
+  dp(this.width, this.x, Math.abs((this.width-this.x)/(this.width-this.x)))
   let f = Math.sqrt(this.num)*5;
   for (let i=0; i<this.num; i++) {
     let ang = Math.PI*i/this.num;
@@ -13,7 +14,7 @@ var Fish = function(options) {
       y: this.y+rand.range(-this.size*f, this.size*f),
       life: 0,
       size: this.size*rand.range(10,30)/10,
-      dx: rand.pick([1,-1])*rand.range(this.dd/2, this.dd),
+      dx: Math.abs((this.width-this.x)/(this.width-this.x))*rand.range(this.dd/2, this.dd),
       dy: rand.range(-this.dd/4, this.dd/4)*Math.sin(ang),
       col: {h: this.hue + rand.range(-10, 10), s: 80+ rand.range(-10, 10), l: 50+ rand.range(-10, 10)}
     });
@@ -48,6 +49,10 @@ Fish.prototype.render = function(ctx) {
     circle(u/2, u/6, u/4, 2, 0.2, 20, 0, 0, 10, 0.8, true); // Fin
     circle(2*u, -u/4, u/4, 1, 1, 0, 0, 0, 30, 1); // Eye
     circle(2*u, -u/4, u/10, 1, 1, 0, 0, 0, -100, 1); // Eye
+    ctx.scale(Math.abs(obj.dx)/obj.dx, 1);
+    ctx.fillStyle = "black";
+    ctx.font = Math.round(obj.size*1.5)+"px Verdana";
+    ctx.fillText(this.word, -u/2, u/2); // Word
     ctx.restore();
     function circle(x, y, r, w, h, rot, hue, sat, lum, alpha=1, stroke=false) {
       ctx.save();

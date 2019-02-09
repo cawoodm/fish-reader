@@ -5,7 +5,6 @@ var Fish = function(options) {
   Object.assign(this, {x: 0, y:0, width:1, num: 1, word: "", hue: 120, size: 5, lifetime: 100, gravity: 2, dd: 100});
   Object.assign(this, options);
   this.objs = [];
-  dp(this.width, this.x, Math.abs((this.width-this.x)/(this.width-this.x)))
   let f = Math.sqrt(this.num)*5;
   for (let i=0; i<this.num; i++) {
     let ang = Math.PI*i/this.num;
@@ -25,7 +24,12 @@ Fish.prototype.update = function(delta) {
 
     // Lifetime
     obj.life += delta * 50;
-    if (obj.life > this.lifetime) objs.splice(index, 1);
+    if (
+      (obj.x + obj.width < 0) ||
+      (obj.x > this.width)
+      ) {
+      objs.splice(index, 1);
+    }
     
     // Physics and gravity
     obj.dy += this.gravity;

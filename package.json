@@ -33,5 +33,7 @@
     "dist": "gulp dist --prod",
     "start": "gulp watch serve",
     "test": "gulp lint"
+  },
+  "dependencies": {
   }
 }
